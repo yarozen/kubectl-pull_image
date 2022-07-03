@@ -11,12 +11,14 @@ import logging
 
 def arguments_parsing():
     parser = argparse.ArgumentParser()
-    parser.add_argument("pod", help="Pod to scan")
+    parser.add_argument(
+        "pod", help="Pod that runs a container that its image you wish to pull"
+    )
     parser.add_argument("-n", "--namespace", help="Namespace of pod")
     parser.add_argument(
         "-c",
         "--container",
-        help="container to scan (defaults to first container in pod's spec)",
+        help="Container that its image you wish to pull (required in case the pod runs more than one container)",
     )
     return parser.parse_args()
 
@@ -49,7 +51,7 @@ def get_pod_data(args):
             image = pod.spec.containers[0].image
         else:
             sys.exit(
-                f"Multiple containers in pod {pod_name}: {[container_obj.name for container_obj in pod.spec.containers]}, specify the one you want to clone with '-c' flag"
+                f"Multiple containers in pod {pod_name}: {[container_obj.name for container_obj in pod.spec.containers]}, specify the one you want to pull with '-c' flag"
             )
     node = pod.spec.node_name
     return (
@@ -99,7 +101,7 @@ def clone_image(cluster, image, container, node, pod, namespace):
     job = client.V1Job(
         api_version="batch/v1",
         kind="Job",
-        metadata=client.V1ObjectMeta(name=pod + "-scan"),
+        metadata=client.V1ObjectMeta(name=pod + "-image-cloner"),
         spec=spec,
     )
     batchv1 = client.BatchV1Api()
@@ -134,7 +136,7 @@ def clone_image(cluster, image, container, node, pod, namespace):
             )
         )
     )
-    logging.info(f"Image cloned successfully.")
+    logging.info(f"Image pulled successfully.")
     job.spec.ttl_seconds_after_finished = 1
     job.metadata.resource_version = None
     batchv1.patch_namespaced_job(
