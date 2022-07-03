@@ -31,7 +31,7 @@ TBD
 1. Docker installed on your local machine from which you execute the `kubectl pull-image` command.
 2. Connectivity to your current Kubernetes cluster context (`KUBECONFIG`).
 3. Kubernetes roles to create, list & get Jobs & Pods.
-4. Permission to mount docker socket to pods. If you an admission controller (e.g. OPA gatekeeper) make sure it permits or create a rule to exclude it. 
+4. Permission to mount docker socket to pods. If the k8s cluster runs an admission controller (e.g. OPA gatekeeper) make sure it permits that or create a rule to exclude it. 
 
 ## Author
 Written by 
