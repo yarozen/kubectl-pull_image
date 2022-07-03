@@ -34,6 +34,6 @@ TBD
 4. Permission to mount docker socket to pods. If the k8s cluster runs an admission controller (e.g. OPA gatekeeper) make sure it permits that or create a rule to exclude it. 
 
 ## Author
-Written by 
+Written by Yaniv Rozenboim
 
 
